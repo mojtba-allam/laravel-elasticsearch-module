@@ -26,6 +26,9 @@ bash scripts/test.sh
 - ✅ Elasticsearch integration with Laravel
 - ✅ Vector embeddings for semantic search (384 dimensions)
 - ✅ Hybrid search (keyword + semantic)
+- ✅ **Config-based mapping management** - Define index mappings in PHP config files
+- ✅ **Artisan commands** - Create, list, and manage indices via CLI
+- ✅ **Dynamic mapping creation** - Add new mappings without editing code
 - ✅ Automatic document indexing
 - ✅ Bulk operations support
 - ✅ Queue-based async processing
@@ -37,11 +40,13 @@ bash scripts/test.sh
 
 - **Search Services**: Vector, Hybrid, and Keyword search
 - **Controllers**: Ready-to-use search and document controllers
-- **Commands**: Seeding and indexing commands
+- **Commands**: Seeding, indexing, and mapping management commands
 - **Jobs**: Async embedding generation
+- **Config Management**: PHP-based Elasticsearch mapping definitions
 - **Docker Setup**: Elasticsearch container configuration
 - **Embedding Service**: Python-based HuggingFace transformer service
 - **UI**: Optional search interface
+- **Documentation**: Complete guides for mappings and commands
 
 ## 🔧 Installation
 
@@ -73,6 +78,29 @@ This script will:
 See [INSTALLATION.md](INSTALLATION.md) for detailed manual installation steps.
 
 ## 🎯 Usage
+
+### Mapping Management
+
+```bash
+# List all available mappings
+php artisan elasticsearch:setup-index --list
+
+# Create an index
+php artisan elasticsearch:setup-index products
+
+# Add a new mapping
+php artisan elasticsearch:add-mapping books \
+  --fields="title:text,author:text,isbn:keyword,price:float" \
+  --with-embedding
+
+# View all indices
+php artisan elasticsearch:index-status --list
+
+# Delete an index
+php artisan elasticsearch:index-status --delete=products
+```
+
+See [ELASTICSEARCH_COMMANDS.md](ELASTICSEARCH_COMMANDS.md) for complete command reference.
 
 ### Basic Search
 
@@ -134,6 +162,8 @@ This will test:
 
 ## 📖 Documentation
 
+- [Elasticsearch Commands Reference](ELASTICSEARCH_COMMANDS.md) - Quick command reference
+- [Elasticsearch Mappings Guide](ELASTICSEARCH_MAPPINGS_GUIDE.md) - Complete mapping management guide
 - [Installation Guide](INSTALLATION.md) - Detailed installation steps
 - [Configuration Guide](CONFIGURATION.md) - How to configure for your models
 - [API Documentation](API.md) - API endpoints and usage
@@ -147,6 +177,7 @@ This will test:
 ```bash
 cp -r app/Modules/Search your-laravel-project/app/Modules/
 cp -r app/Console/Commands/* your-laravel-project/app/Console/Commands/
+cp config/elasticsearch.php your-laravel-project/config/
 ```
 
 2. Update your `.env`:
@@ -154,9 +185,34 @@ cp -r app/Console/Commands/* your-laravel-project/app/Console/Commands/
 SCOUT_DRIVER=elasticsearch
 SCOUT_ELASTICSEARCH_HOST=http://localhost:9200
 EMBEDDING_SERVICE_URL=http://localhost:8000
+ELASTICSEARCH_SHARDS=1
+ELASTICSEARCH_REPLICAS=0
 ```
 
-3. Add routes to `routes/api.php`:
+3. Define your index mappings in `config/elasticsearch.php`:
+```php
+'mappings' => [
+    'products' => [
+        'name' => ['type' => 'text', 'analyzer' => 'standard'],
+        'description' => ['type' => 'text', 'analyzer' => 'standard'],
+        'price' => ['type' => 'float'],
+        'category' => ['type' => 'keyword'],
+        'embedding' => [
+            'type' => 'dense_vector',
+            'dims' => 384,
+            'index' => true,
+            'similarity' => 'cosine',
+        ],
+    ],
+],
+```
+
+4. Create indices:
+```bash
+php artisan elasticsearch:setup-index products
+```
+
+5. Add routes to `routes/api.php`:
 ```php
 use App\Modules\Search\Controllers\SearchController;
 
@@ -164,7 +220,7 @@ Route::get('/search/vector', [SearchController::class, 'vector']);
 Route::get('/search/hybrid', [SearchController::class, 'hybrid']);
 ```
 
-4. Start services:
+6. Start services:
 ```bash
 docker-compose up -d
 python3 embedding_server_simple.py &
