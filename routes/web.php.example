@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+// Search UI (optional)
+Route::get('/', function () {
+    return view('search');
+});
+
+// API endpoint for search UI
+Route::post('/api/search', function (Illuminate\Http\Request $request) {
+    $query = $request->input('query');
+    $limit = $request->input('limit', 20);
+    
+    if (empty($query)) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Query is required'
+        ], 400);
+    }
+    
+    // Use pure vector search for better semantic matching
+    $vectorSearch = app(\App\Modules\Search\Services\VectorSearchService::class);
+    $searchResults = $vectorSearch->search($query, $limit);
+    
+    // Format results for the UI
+    $results = collect($searchResults)->map(function($result) {
+        return [
+            'id' => $result['id'],
+            'score' => $result['score'],
+            'title' => $result['title'],
+            'description' => substr($result['content'], 0, 200) . '...',
+            'content' => $result['content'],
+            'type' => 'Document'
+        ];
+    });
+    
+    return response()->json([
+        'success' => true,
+        'results' => $results,
+        'total' => $results->count(),
+        'query' => $query,
+        'search_type' => 'vector'
+    ]);
+})->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);

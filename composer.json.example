@@ -1,0 +1,6 @@
+{
+    "require": {
+        "elasticsearch/elasticsearch": "^8.0",
+        "laravel/scout": "^10.0"
+    }
+}

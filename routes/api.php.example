@@ -1,0 +1,13 @@
+<?php
+
+use App\Modules\Search\Controllers\DocumentController;
+use App\Modules\Search\Controllers\SearchController;
+use Illuminate\Support\Facades\Route;
+
+// Document CRUD endpoints
+Route::apiResource('documents', DocumentController::class);
+
+// Search endpoints
+Route::get('/search', [SearchController::class, 'search']);
+Route::get('/search/vector', [SearchController::class, 'vector']);
+Route::get('/search/hybrid', [SearchController::class, 'hybrid']);

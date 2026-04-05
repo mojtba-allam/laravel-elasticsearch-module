@@ -1,0 +1,11 @@
+<?php
+
+return [
+    'driver' => env('SCOUT_DRIVER', 'elasticsearch'),
+    
+    'elasticsearch' => [
+        'hosts' => [
+            env('SCOUT_ELASTICSEARCH_HOST', 'http://localhost:9200'),
+        ],
+    ],
+];

@@ -1,0 +1,10 @@
+<?php
+
+return [
+    // Add this to your existing config/services.php
+    
+    'embedding' => [
+        'url' => env('EMBEDDING_SERVICE_URL', 'http://localhost:8000'),
+        'timeout' => env('EMBEDDING_SERVICE_TIMEOUT', 30),
+    ],
+];
