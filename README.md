@@ -11,7 +11,7 @@ A production-ready Laravel module for integrating Elasticsearch with support for
 
 ```bash
 # 1. Clone the module
-git clone https://github.com/YOUR_USERNAME/laravel-elasticsearch-module.git
+git clone https://github.com/mojtba-allam/laravel-elasticsearch-module.git
 
 # 2. Run the installation script
 cd laravel-elasticsearch-module
@@ -264,8 +264,8 @@ This project is open-sourced software licensed under the [MIT license](LICENSE).
 ## 🆘 Support
 
 - 📧 Email: support@example.com
-- 🐛 Issues: [GitHub Issues](https://github.com/YOUR_USERNAME/laravel-elasticsearch-module/issues)
-- 📖 Docs: [Full Documentation](https://github.com/YOUR_USERNAME/laravel-elasticsearch-module/wiki)
+- 🐛 Issues: [GitHub Issues](https://github.com/mojtba-allam/laravel-elasticsearch-module/issues)
+- 📖 Docs: [Full Documentation](https://github.com/mojtba-allam/laravel-elasticsearch-module/wiki)
 
 ## 🙏 Credits
 
